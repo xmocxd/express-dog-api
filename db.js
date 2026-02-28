@@ -4,12 +4,13 @@ const MONGO_URI = process.env.MONGO_URI;
 const db = {};
 
 db.connect = function() {
-    mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    if (!MONGO_URI) {
+        console.error('MONGO_URI environment variable is required');
+        process.exit(1);
+    }
+    mongoose.connect(MONGO_URI)
     .then(() => {
         console.log('Connected to MongoDB');
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
     })
     .catch(err => {
         console.error('Database connection error:', err);

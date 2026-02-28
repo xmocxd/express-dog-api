@@ -24,6 +24,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -32,33 +33,28 @@ const db = require('./db');
 
 const port = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-// Routes
 app.use('/api', routes);
 
-let dbConnection = db.connect();
+const conn = db.connect();
 
-dbConnection.on('connected', () => {
+conn.on('connected', () => {
     console.log('Connected to DB successfully');
-    
-    console.log("Host:", dbConnection.host);
-    console.log("Port:", dbConnection.port);
-    console.log("Database Name:", dbConnection.name);
-    console.log("Ready State:", mongoose.STATES[dbConnection.readyState]);
-    
-    app.listen(port, () => {
-        console.log(`Listening on port ${port}`);
-    });
+    console.log("Host:", conn.host);
+    console.log("Port:", conn.port);
+    console.log("Database Name:", conn.name);
+    console.log("Ready State:", mongoose.STATES[conn.readyState]);
+    if (process.env.NODE_ENV !== 'test') {
+        app.listen(port, () => console.log(`Listening on port ${port}`));
+    }
 });
 
-dbConnection.on('error', (err) => {
+conn.on('error', (err) => {
     console.error('Mongoose connection error:', err);
 });
 
-dbConnection.on('disconnected', () => {
+conn.on('disconnected', () => {
     console.log('Mongoose disconnected.');
 });
 

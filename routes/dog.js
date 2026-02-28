@@ -13,3 +13,17 @@
 // 7. **Listing Adopted Dogs:** Authenticated users can list dogs they've adopted, with pagination support.
 
 const express = require('express');
+
+const router = express.Router();
+
+const dog = require('../controllers/dog');
+const auth = require('../middleware/auth');
+const rateLimit = require('../middleware/rateLimit');
+
+router.post('/dogs', auth, rateLimit, dog.register);
+router.post('/dogs/:id/adopt', auth, rateLimit, dog.adopt);
+router.delete('/dogs/:id', auth, rateLimit, dog.remove);
+router.get('/dogs/registered', auth, rateLimit, dog.listRegistered);
+router.get('/dogs/adopted', auth, rateLimit, dog.listAdopted);
+
+module.exports = router;
