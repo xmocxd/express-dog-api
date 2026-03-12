@@ -19,7 +19,7 @@
 
 - see queries.text for example queries
 - run the test suite
-`npm run dev-test`
+`npm test`
 
 ---------
 

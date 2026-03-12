@@ -7,7 +7,7 @@
 		"start": "node app.js",
 		"dev": "export MONGO_URI=mongodb://localhost:27017/dog-api && nodemon -L app.js",
 		"dev-test": "export MONGO_URI=mongodb://localhost:27017/dog-api && jest --testTimeout=120000",
-		"test": "jest --testTimeout=120000"
+		"test": "jest --testTimeout=120000 --verbose"
 	},
 	"author": "",
 	"license": "ISC",
