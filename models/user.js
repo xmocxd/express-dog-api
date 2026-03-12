@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+// User Model
+
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 }, { timestamps: true });
 
+// Create a new user with a hashed password. Normalizes the username and returns a safe user object (no password).
 userSchema.statics.register = async function (username, password) {
   if (!username || typeof username !== 'string' || !username.trim()) {
     const err = new Error('Username is required');
@@ -34,6 +37,7 @@ userSchema.statics.register = async function (username, password) {
   return u.toObject({ transform: (_, ret) => { delete ret.password; return ret; } });
 };
 
+// Validate credentials and return a safe user object (no password). Throws 401 for bad username/password.
 userSchema.statics.login = async function (username, password) {
   if (!username || typeof username !== 'string' || !username.trim()) {
     const err = new Error('Username is required');

@@ -37,6 +37,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/api', routes);
 
+
+// connect to the db
+
 const conn = db.connect();
 
 conn.on('connected', () => {

@@ -20,10 +20,25 @@ const dog = require('../controllers/dog');
 const auth = require('../middleware/auth');
 const rateLimit = require('../middleware/rateLimit');
 
+
+
+// Register a dog
+// Dog Schema:
+//   name: { type: String, required: true },
+//   description: { type: String, default: '' },
 router.post('/dogs', auth, rateLimit, dog.register);
+
+// Adopt a dog by ID
+// optional thankYouMessage in body
 router.post('/dogs/:id/adopt', auth, rateLimit, dog.adopt);
+
+// Delete a dog by ID
 router.delete('/dogs/:id', auth, rateLimit, dog.remove);
+
+// List dogs registered by the authenticated user
 router.get('/dogs/registered', auth, rateLimit, dog.listRegistered);
+
+// List dogs adopted by the authenticated user
 router.get('/dogs/adopted', auth, rateLimit, dog.listAdopted);
 
 module.exports = router;

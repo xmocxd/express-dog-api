@@ -1,0 +1,141 @@
+----
+
+curl http://localhost:3000/api/auth-test \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIyNWI5MzM5NWJmZTg0NzBhOTA0YjgiLCJpYXQiOjE3NzMyOTY1NDUsImV4cCI6MTc3MzM4Mjk0NX0.vJpoUUiCrziAeBZet3U1mQl4tejl0X37kqGEUQkGx1A"
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIyNWI5MzM5NWJmZTg0NzBhOTA0YjgiLCJpYXQiOjE3NzMyOTY1NDUsImV4cCI6MTc3MzM4Mjk0NX0.vJpoUUiCrziAeBZet3U1mQl4tejl0X37kqGEUQkGx1A
+
+
+  curl -X POST http://localhost:3000/api/dogs \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIyNWI5MzM5NWJmZTg0NzBhOTA0YjgiLCJpYXQiOjE3NzMyOTY1NDUsImV4cCI6MTc3MzM4Mjk0NX0.vJpoUUiCrziAeBZet3U1mQl4tejl0X37kqGEUQkGx1A" \
+    -d "{\"name\":\"Buddy\",\"description\":\"Friendly golden retriever\"}"
+
+
+
+curl -X GET "http://localhost:3000/api/dogs/registered" \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIyNWI5MzM5NWJmZTg0NzBhOTA0YjgiLCJpYXQiOjE3NzMyOTY1NDUsImV4cCI6MTc3MzM4Mjk0NX0.vJpoUUiCrziAeBZet3U1mQl4tejl0X37kqGEUQkGx1A"
+
+
+
+curl -X POST http://localhost:3000/api/dogs/69b25e3ec0137dce778d56b3/adopt \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIyNWI5MzM5NWJmZTg0NzBhOTA0YjgiLCJpYXQiOjE3NzMyOTY1NDUsImV4cCI6MTc3MzM4Mjk0NX0.vJpoUUiCrziAeBZet3U1mQl4tejl0X37kqGEUQkGx1A" \
+-d '{"thankYouMessage":"Thank you so much!"}'
+
+
+
+  curl -X DELETE http://localhost:3000/api/dogs/69b25e3ec0137dce778d56b3 \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWIyNWI5MzM5NWJmZTg0NzBhOTA0YjgiLCJpYXQiOjE3NzMyOTY1NDUsImV4cCI6MTc3MzM4Mjk0NX0.vJpoUUiCrziAeBZet3U1mQl4tejl0X37kqGEUQkGx1A"
+
+
+----
+
+
+
+TEST ROUTES
+
+Basic Test
+
+curl http://localhost:3000/api/
+
+Authenticated Test
+
+get a token via login route, then:
+
+curl http://localhost:3000/api/auth-test \
+-H "Authorization: Bearer YOUR_TOKEN"
+
+---
+
+--------------------------------------------------------------------------------
+
+USER ROUTES
+
+Register
+
+Creates a new user. Passwords are hashed before storage.
+
+  curl -X POST http://localhost:3000/api/register \
+    -H "Content-Type: application/json" \
+    -d "{\"username\":\"alice\",\"password\":\"secret123\"}"
+
+Login
+
+Authenticates with username and password. Returns a JWT (valid 24h) and user object. Use the token in the Authorization header for dog routes.
+
+  curl -X POST http://localhost:3000/api/login \
+    -H "Content-Type: application/json" \
+    -d "{\"username\":\"alice\",\"password\":\"secret123\"}"
+
+--------------------------------------------------------------------------------
+
+DOG ROUTES (authenticated)
+
+Replace YOUR_TOKEN with the token from the login response.
+
+Register a dog
+
+Registers a dog for adoption. Requires name; description is optional.
+
+  curl -X POST http://localhost:3000/api/dogs \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer YOUR_TOKEN" \
+    -d "{\"name\":\"Buddy\",\"description\":\"Friendly golden retriever\"}"
+
+Adopt a dog
+
+Adopts a dog by ID. Optional body: thankYouMessage for the original owner. Fails if the dog is already adopted or if you registered it.
+
+  curl -X POST http://localhost:3000/api/dogs/DOG_ID/adopt \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer YOUR_TOKEN" \
+    -d "{\"thankYouMessage\":\"Thank you so much!\"}"
+
+Replace DOG_ID with a valid MongoDB ObjectId (e.g. from the register response).
+
+Remove a registered dog
+
+Deletes a dog you registered. Fails if the dog has been adopted or if you are not the owner.
+
+  curl -X DELETE http://localhost:3000/api/dogs/DOG_ID \
+    -H "Authorization: Bearer YOUR_TOKEN"
+
+Replace DOG_ID with the dog's ID.
+
+List registered dogs
+
+Lists dogs you have registered. Supports filtering by status and pagination.
+
+Query parameters:
+  status (optional): available (not adopted) or adopted
+  page (optional): page number, default 1
+  limit (optional): items per page, default 10, max 50
+
+  # All registered dogs (first page)
+  curl -X GET "http://localhost:3000/api/dogs/registered" \
+    -H "Authorization: Bearer YOUR_TOKEN"
+
+  # Only available (not yet adopted)
+  curl -X GET "http://localhost:3000/api/dogs/registered?status=available" \
+    -H "Authorization: Bearer YOUR_TOKEN"
+
+  # With pagination
+  curl -X GET "http://localhost:3000/api/dogs/registered?page=2&limit=5" \
+    -H "Authorization: Bearer YOUR_TOKEN"
+
+List adopted dogs
+
+Lists dogs you have adopted. Supports pagination.
+
+Query parameters:
+  page (optional): page number, default 1
+  limit (optional): items per page, default 10, max 50
+
+  # First page
+  curl -X GET "http://localhost:3000/api/dogs/adopted" \
+    -H "Authorization: Bearer YOUR_TOKEN"
+
+  # With pagination
+  curl -X GET "http://localhost:3000/api/dogs/adopted?page=1&limit=20" \
+    -H "Authorization: Bearer YOUR_TOKEN"

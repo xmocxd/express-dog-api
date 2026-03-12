@@ -1,3 +1,29 @@
+# Usage
+
+- set up a local mongodb instance for testing
+`docker run --name local-mongo -p 27017:27017 -d mongo:latest`
+
+- run the api server -- this will export the MONGO_URI automatically
+`npm run dev`
+
+- NOTE: nodemon -L required for refresh on wsl
+
+# ETC
+
+- test the mongo connection
+`mongosh "mongodb://localhost:27017" --eval "db.adminCommand('ping')"`
+- set the MONGO_URI env variable
+`export MONGO_URI=mongodb://localhost:27017/dog-api`
+
+# Testing
+
+- see queries.text for example queries
+- run the test suite
+`npm run dev-test`
+
+---------
+
+
 The folder structure designed by our software architects ensures adherence to best practices:
 
 - `controllers`: Contains the logic for handling incoming requests and returning responses to the client.
